@@ -1,0 +1,225 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------------------------------Agent--------------------------------------------------------------%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class agent
+	--act to maximize long-term profit
+	
+properties
+	role : determines primarily performProduction's functionality. Committed to role for 'lifetime' (!=bankrupt)
+	inventory
+		- could be separated into input and output inventory
+	
+	currency
+	activeBid 
+	activeAsk
+	
+	
+methods
+
+
+	generateOffers()
+		--if low on ingredients, createBid()
+		--if produced unneeded item, createAsk()
+		
+	createBid(commodity, limit)
+		priceOf(commodity)
+		determinePurchaseQuantity(commodity)
+		min(desired, limit)
+		addBid to clearing house
+		
+	createAsk(commodity, limit)
+		priceOf(commodity)
+		determineSaleQuantity(commodity)
+		max(ideal, limit)
+		addBid to clearing house
+		
+	determinePurchaseQuantity(commodity)
+		mean : determine historic mean price of commodity --SUCCESSFUL TRADES (can only look back )
+		favorability : maxPrice - position of mean within observed trading range (agent's willing price range)
+		amountToBuy : favorability * availableInventorySpace
+		
+		return amountToBuy
+		
+	determineSaleQuantity(commodity)
+		mean : determine historic mean price of commodity --SUCCESSFUL TRADES (can only look back )
+		favorability : position of mean within observed trading range (agent's willing price range)
+		amountToSell : favorability * excessInventoryOfCommodity
+		
+		return amountToSell
+		
+	
+	performProduction()
+		--perfomed each turn if desired/able
+		--transform a set of commodities into another set
+		
+		if materials not available
+			fine $2 (arbitrary)
+			return
+		
+		remove ingredients from inventory
+		add newly created product to inventory
+		
+		
+	updatePriceBelief()
+		-- When the clearing house resolves all available trades. Each agent updates its pricing belief based on whether the trade was successful or not
+		-- When trades are accepted, beliefs are enforced. 
+			if acceptedPrice is far from historic mean, their pricing interval is translated towards mean.
+			price bounds are also moved inwards towards priceBeliefMean by 5% (arbitrary amount)
+		--When not accepted, beliefs shaken
+			shift pricing interval towards mean
+			price bounds expanded by arb amount
+			agents low on inventory adjust price interval more aggressively
+				otherwise, rejected agent examines current round's supply and demand for commodity and adjust price in anticipation of price change
+				
+	declareBankruptcy()
+		clear inventories
+		reset money to a particular value
+		change role
+		
+		--FIXME no idea where to call on this really. 
+		
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-----------------------------------------------------ClearingHouse--------------------------------------------------------%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class clearingHouse
+
+properties
+	commodityHouses (one per each tradable commodity in game)
+		
+methods
+	
+	
+	shuffleHouses()
+		-- May be worth doing at a point if traders are capable of trading in multiple quantities? So trade order cannot be known		
+	
+	resolveOffers()
+		
+		for each commodityHouse in commodityHouses
+		{
+			commodityHouse.sortList(bidList);
+			commodityHouse.sortList(askList);
+			commodityHouse.resolveOffers();
+		}
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%----------------------------------------------------CommodityHouse--------------------------------------------------------%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class comodityHouse
+
+properties
+	bidList
+	askList
+	
+	sortList()
+		sort bid or ask list by price
+		if ask
+			increasing order
+		if bid
+			decreasing order
+		
+	resolveOffers()
+		--matches highest bid to lowest ask
+		--offers updated to refleck commodities exchanged
+		--if one offer has zero units unfilled (quantity desired entirely gone), remove offer from respective list
+		
+		while(both books not empty)
+			buyer = first bid in book
+			seller = first ask in book
+			quantityTraded = Min(units offered by seller, units desired by buyer)
+			clearingPrice = Mean(seller's offer price, buyer's offer price)
+			
+			if quantityTraded > 0 
+			{
+				seller = seller.quantity - quantityTraded
+				buyer  = buyer.quantity - quantityTraded
+				
+				transfer quantityTraded of commodity from seller to buyer
+				transfer clearingPrice*quantityTraded from buyer to seller
+			}
+			buyer.updatePriceBelief
+			seller.updatePriceBelief
+			if seller.quantity == 0
+			{
+				remove seller ask from book
+			}
+			if buyer.quantity == 0
+			{
+				remove buyer bid from book
+			}
+		--remaining offers rejected and books cleared
+		for each remaining offer
+			clear offer
+			if buyer
+				buyer.updatePriceBelief
+			if seller	
+				seller.updatePriceBelief
+		
+				
+		
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--------------------------------------------------------MAIN--------------------------------------------------------------%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class main
+
+properties
+	agents
+	clearingHouse
+
+methods
+	Update()
+		for round to numberOfRounds
+		{
+			for each agent in agents
+			{
+				agent.performProduction();
+				agent.generateOffers();
+			}
+			clearingHouse.resolveOffers();
+			
+			agentUpdate()
+				-- send agent update on info
+				info:
+					mean price for each commodity in user-defined window
+					mean quantity of each commodity offered for sale within window
+					mean quantity of each commodity bid on within some window
+		}
+		
+	
+	
+	
+
+
+
+
+
+
+
+
+%%%%%%%CONCERNS%%%%%%%
+
+Mainly need to make sure organization is correct
+Unsure as to how updatePriceBelief should be called for instance.
+Seems odd for the commodity house to have knowledge of each agent, so should rather probably be called from main.
+	Perhaps various methods of clearingHouse/commodityHouse return lists of what beliefs need be updated.
+
+
+
+
+
+
+
+
+
+
+
+
+
