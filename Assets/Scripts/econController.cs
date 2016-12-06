@@ -11,6 +11,7 @@ public class econController : MonoBehaviour {
     public bool randomizeAgents;
 
     private List<Agent> agents = new List<Agent>();
+    private ClearingHouse clearingHouse;
     private int farmers = 0;
     private int miners = 0;
     private int woodcutters = 0;
@@ -27,14 +28,12 @@ public class econController : MonoBehaviour {
 
         System.Random pseudoRandom = new System.Random(seed.GetHashCode());
 
-
+        //Create Agents
         RandomlyAssignRoles(pseudoRandom); //Allow AssignRoles as an option
 
-        print("Number of farmers: " + farmers);
-        print("Number of miners: " + miners);
-        print("Number of woodcutters: " + woodcutters);
-        print("Number of refiners: " + refiners);        
-        print("Number of blacksmiths: " + blacksmiths);
+        //Create Clearing House
+        clearingHouse = new ClearingHouse();
+
 
     }
 	
@@ -44,14 +43,27 @@ public class econController : MonoBehaviour {
         //Game 'Loop'
         if (Input.GetMouseButtonUp(0))
         {
+            
             foreach (Agent agent in agents)
             {
                 agent.performProduction();
+                agent.generateOffers(clearingHouse.newTrades);
             }
+
+            clearingHouse.ResolveOffers();
+
+            UpdateAgentInfo();
         }
 	}
 
-
+    void UpdateAgentInfo()
+    {
+        /* Send agent proper information
+            mean price for each commodity in user-defined window
+		    mean quantity of each commodity offered for sale within window
+		    mean quantity of each commodity bid on within some window
+        */
+    }
 
     void RandomlyAssignRoles(System.Random pseudoRandom)
     {
@@ -85,11 +97,16 @@ public class econController : MonoBehaviour {
             }
             agents.Add(agent);
         }
+
+        print("Number of farmers: " + farmers);
+        print("Number of miners: " + miners);
+        print("Number of woodcutters: " + woodcutters);
+        print("Number of refiners: " + refiners);
+        print("Number of blacksmiths: " + blacksmiths);
+
     }
-
-
-
-    //FIXME: ALLOW MANUAL ROLE ASSIGNMENT
+    
+    //ADDME: ALLOW MANUAL ROLE ASSIGNMENT
     void AssignRoles() 
     {
         for (int i = 0; i < agentCount; i++)

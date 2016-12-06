@@ -54,7 +54,7 @@ methods
 		
 		if materials not available
 			fine $2 (arbitrary)
-			return
+			return;
 		
 		remove ingredients from inventory
 		add newly created product to inventory

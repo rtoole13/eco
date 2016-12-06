@@ -3,11 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+public struct AuctionLists
+{
+    public Dictionary<string, int> excessList;
+    public Dictionary<string, int> deficitList;
+}
+
 public class Agent {
 
 
     private Role role;
-
+    private int historicWindow = 15; //determines how far back in turns the agent can recall 
     private string seed;
     private System.Random pseudoRandom;
 
@@ -27,19 +33,29 @@ public class Agent {
         pseudoRandom = new System.Random(seed.GetHashCode());
     }
     
-	public void generateOffers()
+	public void generateOffers(List<Trade> tradeList)
     {
-        //if low on ingredients, create bid
-        //if produced unneeded item, create ask
-    }
+        AuctionLists auctionLists = role.checkStock();
+        /*
+        if (auctionLists.excessList.ContainsKey("Food"))
+        {
+            Debug.Log(auctionLists.excessList["Food"]);
+        }
+        */
 
-    public void createAsk()
-    {
-
-    }
-
-    public void createBid()
-    {
+        for(int i = 0; i < auctionLists.excessList.Count; i++)
+        {
+            //ADDME: logic determining price and quantity of ask
+            //Trade newAsk = new Trade("ask", "food", 5, 5f);
+            //tradeList.Add(newAsk)
+        }
+        for (int i = 0; i < auctionLists.deficitList.Count; i++)
+        {
+            //ADDME: logic determining price and quantity of bid
+            //Trade newBid = new Trade("bid", "food", 5, 5f); 
+            //tradeList.Add(newBid)
+        }
+        
 
     }
 

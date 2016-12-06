@@ -3,10 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+
+
 public abstract class Role
 {
+    
 
-    public virtual void checkStock()
+    public virtual AuctionLists checkStock()
     {
         throw new NotImplementedException();
     }
@@ -52,9 +55,30 @@ public class Blacksmith : Role
         }
     }
 
-    public override void checkStock()
+    public override AuctionLists checkStock()
     {
+        var excess = new Dictionary<string, int>();
+        var deficit = new Dictionary<string, int>();
 
+        if (inventory["Tools"] > toolThreshold)
+        {
+            excess.Add("Tools", inventory["Tools"] - toolThreshold);
+        }
+        if (inventory["Food"] < foodThreshold)
+        {
+            deficit.Add("Food", foodThreshold - inventory["Food"]);
+        }
+        if (inventory["Metal"] < metalThreshold)
+        {
+            deficit.Add("Metal", metalThreshold - inventory["Metal"]);
+        }
+
+        var auctions = new AuctionLists
+        {
+            excessList = excess,
+            deficitList = deficit
+        };
+        return auctions;
     }
 }
 
@@ -100,9 +124,30 @@ public class Farmer : Role
         }
     }
 
-    public override void checkStock()
+    public override AuctionLists checkStock()
     {
+        var excess = new Dictionary<string, int>();
+        var deficit = new Dictionary<string, int>();
 
+        if (inventory["Food"] > foodThreshold)
+        {
+            excess.Add("Food", inventory["Food"] - foodThreshold);
+        }
+        if (inventory["Tools"] < toolThreshold)
+        {
+            deficit.Add("Tools", toolThreshold - inventory["Tools"]);
+        }
+        if (inventory["Wood"] < woodThreshold)
+        {
+            deficit.Add("Wood", woodThreshold - inventory["Wood"]);
+        }
+
+        var auctions = new AuctionLists
+        {
+            excessList = excess,
+            deficitList = deficit
+        };
+        return auctions;
     }
 }
 
@@ -148,9 +193,30 @@ public class Miner : Role
         }
     }
 
-    public override void checkStock()
+    public override AuctionLists checkStock()
     {
+        var excess = new Dictionary<string, int>();
+        var deficit = new Dictionary<string, int>();
 
+        if (inventory["Ore"] > oreThreshold)
+        {
+            excess.Add("Ore", inventory["Ore"] - oreThreshold);
+        }
+        if (inventory["Tools"] < toolThreshold)
+        {
+            deficit.Add("Tools", toolThreshold - inventory["Tools"]);
+        }
+        if (inventory["Food"] < foodThreshold)
+        {
+            deficit.Add("Food", foodThreshold - inventory["Food"]);
+        }
+
+        var auctions = new AuctionLists
+        {
+            excessList = excess,
+            deficitList = deficit
+        };
+        return auctions;
     }
 }
 
@@ -198,9 +264,30 @@ public class Refiner : Role
         }
     }
 
-    public override void checkStock()
+    public override AuctionLists checkStock()
     {
+        var excess = new Dictionary<string, int>();
+        var deficit = new Dictionary<string, int>();
 
+        if (inventory["Metal"] > metalThreshold)
+        {
+            excess.Add("Metal", inventory["Metal"] - metalThreshold);
+        }
+        if (inventory["Tools"] < toolThreshold)
+        {
+            deficit.Add("Tools", toolThreshold - inventory["Tools"]);
+        }
+        if (inventory["Food"] < foodThreshold)
+        {
+            deficit.Add("Food", foodThreshold - inventory["Food"]);
+        }
+
+        var auctions = new AuctionLists
+        {
+            excessList = excess,
+            deficitList = deficit
+        };
+        return auctions;
     }
 }
 
@@ -246,8 +333,29 @@ public class Woodcutter : Role
         }
     }
 
-    public override void checkStock()
+    public override AuctionLists checkStock()
     {
+        var excess = new Dictionary<string, int>();
+        var deficit = new Dictionary<string, int>();
 
+        if (inventory["Wood"] > woodThreshold)
+        {
+            excess.Add("Wood", inventory["Wood"] - woodThreshold);
+        }
+        if (inventory["Tools"] < toolThreshold)
+        {
+            deficit.Add("Tools", toolThreshold - inventory["Tools"]);
+        }
+        if (inventory["Food"] < foodThreshold)
+        {
+            deficit.Add("Food", foodThreshold - inventory["Food"]);
+        }
+
+        var auctions = new AuctionLists
+        {
+            excessList = excess,
+            deficitList = deficit
+        };
+        return auctions;
     }
 }
