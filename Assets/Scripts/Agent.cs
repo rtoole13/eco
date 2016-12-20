@@ -43,18 +43,36 @@ public class Agent {
         }
         */
 
-        for(int i = 0; i < auctionLists.excessList.Count; i++)
+        //ADDME: logic determining price and quantity of ask
+        foreach (KeyValuePair<string, int> kvp in auctionLists.excessList)
         {
-            //ADDME: logic determining price and quantity of ask
-            //Trade newAsk = new Trade("ask", "food", 5, 5f);
-            //tradeList.Add(newAsk)
+            //FIXME: currently placing an ask for exactly the excess amount and a random price. no logic applied
+            int cost = pseudoRandom.Next(2, 6);
+            int quant = kvp.Value;
+            Trade newAsk = new Trade("ask", kvp.Key, quant, cost); 
+            tradeList.Add(newAsk);
         }
-        for (int i = 0; i < auctionLists.deficitList.Count; i++)
+
+
+        foreach (KeyValuePair<string, int> kvp in auctionLists.deficitList)
         {
-            //ADDME: logic determining price and quantity of bid
-            //Trade newBid = new Trade("bid", "food", 5, 5f); 
-            //tradeList.Add(newBid)
+            //FIXME: currently trying to place a bid for exactly the deficit amount and a random price.
+            int cost = pseudoRandom.Next(2, 6);
+            int quant = kvp.Value;
+            if (cost * quant > inventory["coin"])
+            {
+                //cant afford at cost specified. do nothing if broke, otherwise ask at price of 1;
+                if (inventory["coin"] < 1)
+                {
+                    return;
+                }
+                cost = 1;
+                quant = inventory["coin"] / cost;
+            }
+            Trade newBid = new Trade("bid", kvp.Key, quant, cost);
+            tradeList.Add(newBid);
         }
+        
         
 
     }

@@ -49,7 +49,7 @@ public class econController : MonoBehaviour {
                 agent.performProduction();
                 agent.generateOffers(clearingHouse.newTrades);
             }
-
+            
             clearingHouse.ResolveOffers();
 
             UpdateAgentInfo();

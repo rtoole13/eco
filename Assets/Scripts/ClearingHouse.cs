@@ -70,18 +70,69 @@ public class ClearingHouse {
 
     public void ResolveOffers()
     {
+        SortOffers();
 
+    }
+
+    public void SortOffers()
+    {
+        foreach (Trade trade in newTrades)
+        {
+            switch (trade.type)
+            {
+                case "ask":
+                    switch (trade.commodity)
+                    {
+                        case "food":
+                            foodAsks.Add(trade);
+                            break;
+                        case "wood":
+                            woodAsks.Add(trade);
+                            break;
+                        case "ore":
+                            oreAsks.Add(trade);
+                            break;
+                        case "metal":
+                            metalAsks.Add(trade);
+                            break;
+                        case "tools":
+                            toolsAsks.Add(trade);
+                            break;
+                    }
+                    break;
+                case "bid":
+                    switch (trade.commodity)
+                    {
+                        case "food":
+                            foodBids.Add(trade);
+                            break;
+                        case "wood":
+                            woodBids.Add(trade);
+                            break;
+                        case "ore":
+                            oreBids.Add(trade);
+                            break;
+                        case "metal":
+                            metalBids.Add(trade);
+                            break;
+                        case "tools":
+                            toolsBids.Add(trade);
+                            break;
+                    }
+                    break;
+            }
+        }
     }
 }
 
 public class Trade
 {
-    string type;
-    string commodity;
-    int quantity;
-    float price;
+    public string type;
+    public string commodity;
+    public int quantity;
+    public float price;
 
-    public Trade(string type, string commodity, int quantity, float price)
+    public Trade(string type, string commodity, int quantity, int price)
     {
         this.type = type.ToLower();
         this.commodity = commodity.ToLower();
