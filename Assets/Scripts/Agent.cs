@@ -44,37 +44,39 @@ public class Agent {
         */
 
         //ADDME: logic determining price and quantity of ask
-        foreach (KeyValuePair<string, int> kvp in auctionLists.excessList)
+        if (auctionLists.deficitList.Count > 0)
         {
-            //FIXME: currently placing an ask for exactly the excess amount and a random price. no logic applied
-            int cost = pseudoRandom.Next(2, 6);
-            int quant = kvp.Value;
-            Trade newAsk = new Trade("ask", kvp.Key, quant, cost); 
-            tradeList.Add(newAsk);
-        }
-
-
-        foreach (KeyValuePair<string, int> kvp in auctionLists.deficitList)
-        {
-            //FIXME: currently trying to place a bid for exactly the deficit amount and a random price.
-            int cost = pseudoRandom.Next(2, 6);
-            int quant = kvp.Value;
-            if (cost * quant > inventory["coin"])
+            foreach (KeyValuePair<string, int> kvp in auctionLists.excessList)
             {
-                //cant afford at cost specified. do nothing if broke, otherwise ask at price of 1;
-                if (inventory["coin"] < 1)
-                {
-                    return;
-                }
-                cost = 1;
-                quant = inventory["coin"] / cost;
+                //FIXME: currently placing an ask for exactly the excess amount and a random price. no logic applied
+                int cost = pseudoRandom.Next(2, 6);
+                int quant = kvp.Value;
+                Trade newAsk = new Trade("ask", kvp.Key, quant, cost);
+                tradeList.Add(newAsk);
             }
-            Trade newBid = new Trade("bid", kvp.Key, quant, cost);
-            tradeList.Add(newBid);
         }
-        
-        
 
+        if (auctionLists.excessList.Count > 0)
+        {
+            foreach (KeyValuePair<string, int> kvp in auctionLists.deficitList)
+            {
+                //FIXME: currently trying to place a bid for exactly the deficit amount and a random price.
+                int cost = pseudoRandom.Next(2, 6);
+                int quant = kvp.Value;
+                if (cost * quant > inventory["Coin"])
+                {
+                    //cant afford at cost specified. do nothing if broke, otherwise ask at price of 1;
+                    if (inventory["Coin"] < 1)
+                    {
+                        return;
+                    }
+                    cost = 1;
+                    quant = inventory["Coin"] / cost;
+                }
+                Trade newBid = new Trade("bid", kvp.Key, quant, cost);
+                tradeList.Add(newBid);
+            }
+        }
     }
 
     public void performProduction()

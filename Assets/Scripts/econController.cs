@@ -29,7 +29,15 @@ public class econController : MonoBehaviour {
         System.Random pseudoRandom = new System.Random(seed.GetHashCode());
 
         //Create Agents
-        RandomlyAssignRoles(pseudoRandom); //Allow AssignRoles as an option
+        if (randomizeAgents)
+        {
+            RandomlyAssignRoles(pseudoRandom); //Allow AssignRoles as an option
+        }
+        else
+        {
+            AssignRoles();
+        }
+        DisplayAgentCount();
 
         //Create Clearing House
         clearingHouse = new ClearingHouse();
@@ -37,13 +45,20 @@ public class econController : MonoBehaviour {
 
     }
 	
+    void DisplayAgentCount()
+    {
+        print("Number of farmers: " + farmers);
+        print("Number of miners: " + miners);
+        print("Number of woodcutters: " + woodcutters);
+        print("Number of refiners: " + refiners);
+        print("Number of blacksmiths: " + blacksmiths);
+    }
 	// Update is called once per frame
 	void Update ()
     {
         //Game 'Loop'
         if (Input.GetMouseButtonUp(0))
         {
-            
             foreach (Agent agent in agents)
             {
                 agent.performProduction();
@@ -97,13 +112,6 @@ public class econController : MonoBehaviour {
             }
             agents.Add(agent);
         }
-
-        print("Number of farmers: " + farmers);
-        print("Number of miners: " + miners);
-        print("Number of woodcutters: " + woodcutters);
-        print("Number of refiners: " + refiners);
-        print("Number of blacksmiths: " + blacksmiths);
-
     }
     
     //ADDME: ALLOW MANUAL ROLE ASSIGNMENT
@@ -111,8 +119,12 @@ public class econController : MonoBehaviour {
     {
         for (int i = 0; i < agentCount; i++)
         {
-
+            Agent agent = new Agent();
+            agent.Role = new Farmer(agent);
+            farmers++;
+            agents.Add(agent);
         }
+
     }
     
 }

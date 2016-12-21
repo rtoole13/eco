@@ -71,7 +71,19 @@ public class ClearingHouse {
     public void ResolveOffers()
     {
         SortOffers();
-
+        if (newTrades.Count > 0)
+        {
+            foreach (Trade trade in newTrades)
+            {
+                Debug.Log(trade.type);
+                Debug.Log(trade.commodity);
+                Debug.Log(trade.price);
+                Debug.Log(trade.quantity);
+            }
+            
+        }
+        ClearLists();
+        
     }
 
     public void SortOffers()
@@ -138,17 +150,18 @@ public class Trade
         this.commodity = commodity.ToLower();
         this.quantity = quantity;
         this.price = price;
-
-        if (!type.Equals("ask") || !type.Equals("bid")) //FIXME: temp check
+        /*
+        if (String.Compare(type, "ask") == 0 || String.Compare(type, "bid") == 0) //FIXME: temp check
         {
-            throw new NotSupportedException();
+            //Debug.Log(commodity);
         }
 
-        if (!commodity.Equals("food") || !commodity.Equals("wood") || !commodity.Equals("ore") 
-            || !commodity.Equals("metal") || !commodity.Equals("tools")) //FIXME: temp check
+        if (String.Compare(commodity, "food") == 0 || String.Compare(commodity, "wood") == 0 || String.Compare(commodity, "ore") == 0
+            || String.Compare(commodity, "metal") == 0 || String.Compare(commodity, "tools") == 0) //FIXME: temp check
         {
-            throw new NotSupportedException();
+            //Debug.Log(commodity);
+            throw new NotImplementedException();
         }
-
+        */
     }
 }
